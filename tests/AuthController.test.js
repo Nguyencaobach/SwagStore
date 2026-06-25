@@ -52,7 +52,7 @@ describe('showLogin', () => {
     const res = mockRes();
     authCtrl.showLogin(req, res);
     const args = res.render.mock.calls[0][1];
-    expect(args.error).toMatch(/login/i);
+    expect(args.error).toMatch(/đăng nhập|đăng ký|login/i);
   });
 
   test('passes success message when ?registered=1', () => {
@@ -78,7 +78,7 @@ describe('login', () => {
     const req = { session: {}, body: { email: CREDS.email, password: 'wrong' } };
     const res = mockRes();
     authCtrl.login(req, res);
-    expect(res.render.mock.calls[0][1].error).toMatch(/invalid/i);
+    expect(res.render.mock.calls[0][1].error).toMatch(/invalid|sai|không đúng/i);
   });
 
   test('sets session.user and redirects on success (empty cart → /)', () => {
