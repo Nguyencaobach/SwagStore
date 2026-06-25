@@ -31,6 +31,7 @@ router.get ('/staff/dashboard',           authCtrl.requireStaff, staffCtrl.showD
 router.get ('/staff/orders',              authCtrl.requireStaff, staffCtrl.listOrders);
 router.get ('/staff/orders/:id',          authCtrl.requireStaff, staffCtrl.viewOrder);
 router.post('/staff/orders/:id/status',   authCtrl.requireStaff, staffCtrl.updateStatus);
+router.get ('/staff/customers',           authCtrl.requireStaff, staffCtrl.listCustomers);
 
 module.exports = router;
 

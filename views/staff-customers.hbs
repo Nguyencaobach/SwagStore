@@ -1,0 +1,71 @@
+<div class="staff-page">
+
+  <!-- Header -->
+  <div class="staff-header">
+    <div class="staff-header-inner">
+      <div>
+        <h1 class="staff-title">&#128100; Khách hàng</h1>
+        <p class="staff-subtitle">Tổng cộng <strong>{{totalCount}}</strong> khách hàng đã đăng ký</p>
+      </div>
+      <a href="/staff/dashboard" class="btn-staff-secondary">&larr; Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="staff-section">
+    <form method="GET" action="/staff/customers" class="search-form">
+      <div class="search-box">
+        <input type="text" name="search" value="{{search}}"
+               placeholder="Tìm theo tên hoặc email..."
+               class="search-input" id="customer-search-input">
+        <button type="submit" class="search-btn">&#128269;</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Customers Table -->
+  <div class="staff-section">
+    {{#if customers.length}}
+    <div class="orders-table-wrap">
+      <table class="orders-table" id="customers-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Địa chỉ</th>
+            <th class="text-center">Số đơn hàng</th>
+            <th>Ngày đăng ký</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each customers}}
+          <tr class="order-row">
+            <td class="text-muted small">{{@index}}</td>
+            <td><strong>{{this.name}}</strong></td>
+            <td class="text-muted">{{this.email}}</td>
+            <td class="text-muted">{{this.address}}</td>
+            <td class="text-center">
+              {{#if this.orderCount}}
+                <span class="badge badge-delivered">{{this.orderCount}} đơn</span>
+              {{else}}
+                <span class="text-muted small">Chưa có</span>
+              {{/if}}
+            </td>
+            <td class="text-muted small">{{formatDate this.createdAt}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+    <div class="empty-state">
+      <div class="empty-icon">&#128100;</div>
+      <h3>Không tìm thấy khách hàng</h3>
+      <p>{{#if search}}Không có kết quả cho "<strong>{{search}}</strong>"{{else}}Chưa có khách hàng nào đăng ký.{{/if}}</p>
+      {{#if search}}<a href="/staff/customers" class="btn-staff-secondary">Xoá bộ lọc</a>{{/if}}
+    </div>
+    {{/if}}
+  </div>
+
+</div>

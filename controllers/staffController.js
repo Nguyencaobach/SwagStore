@@ -5,6 +5,41 @@ const Account = require('../models/Account');
 
 const VALID_STATUSES = ['confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
 
+// ── GET /staff/customers ────────────────────────────────────────
+exports.listCustomers = (req, res) => {
+  const { search } = req.query;
+  let customers = Account.getAll().filter(a => a.role === 'customer');
+
+  if (search && search.trim()) {
+    const q = search.trim().toLowerCase();
+    customers = customers.filter(a =>
+      (a.name  || '').toLowerCase().includes(q) ||
+      (a.email || '').toLowerCase().includes(q)
+    );
+  }
+
+  // Gắn thêm số đơn hàng cho mỗi khách
+  const Order = require('../models/Order');
+  const allOrders = Order.getAll();
+  const enriched = customers.map(c => ({
+    id:         c.id,
+    name:       c.name,
+    email:      c.email,
+    address:    c.address,
+    createdAt:  c.createdAt,
+    orderCount: allOrders.filter(o => String(o.userId) === String(c.id)).length,
+  }));
+
+  res.render('staff-customers', {
+    user:       req.session.user,
+    customers:  enriched,
+    cartCount:  0,
+    search:     search || '',
+    totalCount: enriched.length,
+  });
+};
+
+
 // ── GET /staff/dashboard ────────────────────────────────────────
 exports.showDashboard = (req, res) => {
   const orders     = Order.getAll();
