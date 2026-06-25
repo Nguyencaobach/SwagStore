@@ -6,8 +6,13 @@
   <div class="nav-links">
     <a href="/" class="nav-link">Shop</a>
     {{#if user}}
-      <a href="/orders" class="nav-link">Orders</a>
-      <span class="nav-link">Hi, {{user.name}}</span>
+      {{#if (eq user.role 'staff')}}
+        <a href="/staff/dashboard" class="nav-link nav-staff">&#9881; Quản lý</a>
+        <a href="/staff/orders" class="nav-link">Đơn hàng</a>
+      {{else}}
+        <a href="/orders" class="nav-link">Orders</a>
+      {{/if}}
+      <span class="nav-link nav-user-name">Hi, {{user.name}}</span>
       <a href="/logout" class="nav-link">Logout</a>
     {{else}}
       <a href="/login" class="nav-link">Login</a>

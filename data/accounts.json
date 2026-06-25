@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": 1782369653400,
+    "name": "nguyencaobach",
+    "email": "abc@gmail.com",
+    "address": "HCM",
+    "passwordHash": "$2a$10$iD4DOZKm3Q1awH89LvMB7.2gypuTJTjyKkQF6jHvIHy3qfCi08EW.",
+    "role": "customer",
+    "createdAt": "2026-06-25T06:40:53.483Z"
+  },
+  {
+    "id": 1000000000001,
+    "name": "UMTER",
+    "email": "staff@gmail.com",
+    "address": "SwagStore HQ",
+    "passwordHash": "$2a$10$Clni1NeY49N6BPpPEdgcnOp25QXXENSsAucV.7Zjax4HMaXHw.IG2",
+    "role": "staff",
+    "createdAt": "2026-06-25T00:00:00.000Z"
+  }
+]

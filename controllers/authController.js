@@ -12,12 +12,21 @@ exports.requireLogin = (req, res, next) => {
   res.redirect('/login?error=1');
 };
 
+exports.requireStaff = (req, res, next) => {
+  if (req.session.user && req.session.user.role === 'staff') return next();
+  if (!req.session.user) return res.redirect('/login?error=1');
+  res.redirect('/login?error=forbidden');
+};
+
 exports.showLogin = (req, res) => {
   const cart = getCart(req);
+  let errorMsg = null;
+  if (req.query.error === '1')         errorMsg = 'Vui lòng đăng nhập để tiếp tục.';
+  if (req.query.error === 'forbidden')  errorMsg = 'Bạn không có quyền truy cập khu vực này.';
   res.render('login', {
     cartCount:      cart.count,
-    error:          req.query.error      === '1' ? 'Please login to continue.' : null,
-    successMessage: req.query.registered === '1' ? 'Registration successful. Please log in.' : null,
+    error:          errorMsg,
+    successMessage: req.query.registered === '1' ? 'Đăng ký thành công. Vui lòng đăng nhập.' : null,
   });
 };
 
@@ -51,7 +60,8 @@ exports.login = (req, res) => {
   };
   res.locals.user = req.session.user;
 
-  // Redirect: if there was a cart, go to checkout; else home
+  // Redirect: staff → dashboard, customer → checkout nếu có giỏ, else home
+  if (req.session.user.role === 'staff') return res.redirect('/staff/dashboard');
   const cart2 = getCart(req);
   res.redirect(cart2.count > 0 ? '/checkout' : '/');
 };

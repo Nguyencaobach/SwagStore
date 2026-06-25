@@ -1,8 +1,9 @@
 'use strict';
-const express  = require('express');
-const router   = express.Router();
-const shopCtrl = require('../controllers/shopController');
-const authCtrl = require('../controllers/authController');
+const express     = require('express');
+const router      = express.Router();
+const shopCtrl    = require('../controllers/shopController');
+const authCtrl    = require('../controllers/authController');
+const staffCtrl   = require('../controllers/staffController');
 
 // ── Shop ──────────────────────────────────────────────────────
 router.get('/',             shopCtrl.showShop);
@@ -25,4 +26,11 @@ router.get ('/register', authCtrl.showRegister);
 router.post('/register', authCtrl.register);
 router.get ('/profile',  authCtrl.requireLogin, authCtrl.showProfile);
 
+// ── Staff (requireStaff) ──────────────────────────────────────
+router.get ('/staff/dashboard',           authCtrl.requireStaff, staffCtrl.showDashboard);
+router.get ('/staff/orders',              authCtrl.requireStaff, staffCtrl.listOrders);
+router.get ('/staff/orders/:id',          authCtrl.requireStaff, staffCtrl.viewOrder);
+router.post('/staff/orders/:id/status',   authCtrl.requireStaff, staffCtrl.updateStatus);
+
 module.exports = router;
+

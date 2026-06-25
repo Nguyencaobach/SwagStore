@@ -1,0 +1,109 @@
+<div class="staff-page">
+
+  <!-- Hero header -->
+  <div class="staff-header">
+    <div class="staff-header-inner">
+      <div>
+        <h1 class="staff-title">&#9881; Staff Dashboard</h1>
+        <p class="staff-subtitle">Xin chào, <strong>{{user.name}}</strong> — Quản lý đơn hàng SwagStore</p>
+      </div>
+      <a href="/staff/orders" class="btn-staff-primary">Xem tất cả đơn hàng &rarr;</a>
+    </div>
+  </div>
+
+  <!-- Stats cards -->
+  <div class="staff-stats">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon">&#128230;</div>
+      <div class="stat-number">{{stats.totalOrders}}</div>
+      <div class="stat-label">Tổng đơn hàng</div>
+    </div>
+    <div class="stat-card stat-green">
+      <div class="stat-icon">&#128176;</div>
+      <div class="stat-number">${{stats.totalRevenue}}</div>
+      <div class="stat-label">Doanh thu</div>
+    </div>
+    <div class="stat-card stat-purple">
+      <div class="stat-icon">&#128100;</div>
+      <div class="stat-number">{{stats.totalCustomers}}</div>
+      <div class="stat-label">Khách hàng</div>
+    </div>
+    <div class="stat-card stat-orange">
+      <div class="stat-icon">&#9200;</div>
+      <div class="stat-number">{{stats.pending}}</div>
+      <div class="stat-label">Chờ xử lý</div>
+    </div>
+  </div>
+
+  <!-- Status breakdown -->
+  <div class="staff-section">
+    <h2 class="section-title">Trạng thái đơn hàng</h2>
+    <div class="status-breakdown">
+      <a href="/staff/orders?status=confirmed" class="status-pill status-confirmed">
+        <span class="pill-count">{{stats.pending}}</span>
+        <span>Đã xác nhận</span>
+      </a>
+      <a href="/staff/orders?status=processing" class="status-pill status-processing">
+        <span class="pill-count">{{stats.processing}}</span>
+        <span>Đang xử lý</span>
+      </a>
+      <a href="/staff/orders?status=shipped" class="status-pill status-shipped">
+        <span class="pill-count">{{stats.shipped}}</span>
+        <span>Đang giao</span>
+      </a>
+      <a href="/staff/orders?status=delivered" class="status-pill status-delivered">
+        <span class="pill-count">{{stats.delivered}}</span>
+        <span>Đã giao</span>
+      </a>
+      <a href="/staff/orders?status=cancelled" class="status-pill status-cancelled">
+        <span class="pill-count">{{stats.cancelled}}</span>
+        <span>Đã huỷ</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Recent orders -->
+  <div class="staff-section">
+    <div class="section-header">
+      <h2 class="section-title">Đơn hàng gần đây</h2>
+      <a href="/staff/orders" class="section-link">Xem tất cả &rarr;</a>
+    </div>
+
+    {{#if recentOrders.length}}
+    <div class="orders-table-wrap">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Email</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Ngày đặt</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each recentOrders}}
+          <tr class="order-row">
+            <td class="order-id-cell">{{this.id}}</td>
+            <td>{{this.name}}</td>
+            <td class="text-muted">{{this.email}}</td>
+            <td class="order-total">${{this.total}}</td>
+            <td><span class="badge badge-{{this.status}}">{{this.statusLabel}}</span></td>
+            <td class="text-muted">{{this.placedAt}}</td>
+            <td><a href="/staff/orders/{{this.id}}" class="btn-view">Chi tiết</a></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+    <div class="empty-state">
+      <div class="empty-icon">&#128230;</div>
+      <p>Chưa có đơn hàng nào.</p>
+    </div>
+    {{/if}}
+  </div>
+
+</div>

@@ -1,1 +1,57 @@
-[]
+[
+  {
+    "id": "ORD-1782370759136",
+    "userId": 1000000000001,
+    "email": "staff@gmail.com",
+    "items": [
+      {
+        "product": {
+          "id": 4,
+          "name": "Sauce Labs Fleece Jacket",
+          "price": 49.99,
+          "image": "/images/fleece-jacket.svg",
+          "category": "Apparel",
+          "type": "Fleece Jacket",
+          "badge": null,
+          "desc": "Mid-layer warmth. 100% polyester micro-fleece jacket – perfect for outdoor testing."
+        },
+        "qty": 2,
+        "subtotal": 99.98
+      }
+    ],
+    "total": 107.98,
+    "name": "UMTER",
+    "address": "SwagStore HQ",
+    "placedAt": "13:59:19 25/6/2026",
+    "createdAt": "2026-06-25T06:59:19.163Z",
+    "status": "confirmed"
+  },
+  {
+    "id": "ORD-1782370783688",
+    "userId": 1000000000001,
+    "email": "staff@gmail.com",
+    "items": [
+      {
+        "product": {
+          "id": 3,
+          "name": "Sauce Labs Bolt T-Shirt",
+          "price": 15.99,
+          "image": "/images/bolt-shirt.svg",
+          "category": "Apparel",
+          "type": "T-Shirt",
+          "badge": "New",
+          "desc": "Get your testing power on. Super-soft 100% polyester, wrinkle-free."
+        },
+        "qty": 3,
+        "subtotal": 47.97
+      }
+    ],
+    "total": 51.81,
+    "name": "UMTER",
+    "address": "SwagStore HQ",
+    "placedAt": "13:59:43 25/6/2026",
+    "createdAt": "2026-06-25T06:59:43.688Z",
+    "status": "processing",
+    "updatedAt": "2026-06-25T07:00:57.748Z"
+  }
+]

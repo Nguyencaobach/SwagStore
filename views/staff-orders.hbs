@@ -1,0 +1,91 @@
+<div class="staff-page">
+
+  <!-- Header -->
+  <div class="staff-header">
+    <div class="staff-header-inner">
+      <div>
+        <h1 class="staff-title">&#128230; Quản lý Đơn hàng</h1>
+        <p class="staff-subtitle">Tổng cộng <strong>{{totalCount}}</strong> đơn hàng</p>
+      </div>
+      <a href="/staff/dashboard" class="btn-staff-secondary">&larr; Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="staff-section">
+    <div class="filter-bar">
+      <!-- Status filter tabs -->
+      <div class="filter-tabs">
+        <a href="/staff/orders?status=all{{#if search}}&search={{search}}{{/if}}"
+           class="filter-tab {{#if (eq activeStatus 'all')}}active{{/if}}">Tất cả</a>
+        <a href="/staff/orders?status=confirmed{{#if search}}&search={{search}}{{/if}}"
+           class="filter-tab {{#if (eq activeStatus 'confirmed')}}active{{/if}}">Đã xác nhận</a>
+        <a href="/staff/orders?status=processing{{#if search}}&search={{search}}{{/if}}"
+           class="filter-tab {{#if (eq activeStatus 'processing')}}active{{/if}}">Đang xử lý</a>
+        <a href="/staff/orders?status=shipped{{#if search}}&search={{search}}{{/if}}"
+           class="filter-tab {{#if (eq activeStatus 'shipped')}}active{{/if}}">Đang giao</a>
+        <a href="/staff/orders?status=delivered{{#if search}}&search={{search}}{{/if}}"
+           class="filter-tab {{#if (eq activeStatus 'delivered')}}active{{/if}}">Đã giao</a>
+        <a href="/staff/orders?status=cancelled{{#if search}}&search={{search}}{{/if}}"
+           class="filter-tab {{#if (eq activeStatus 'cancelled')}}active{{/if}}">Đã huỷ</a>
+      </div>
+
+      <!-- Search box -->
+      <form method="GET" action="/staff/orders" class="search-form">
+        <input type="hidden" name="status" value="{{activeStatus}}">
+        <div class="search-box">
+          <input type="text" name="search" value="{{search}}"
+                 placeholder="Tìm mã đơn, tên, email..."
+                 class="search-input" id="staff-search-input">
+          <button type="submit" class="search-btn">&#128269;</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="staff-section">
+    {{#if orders.length}}
+    <div class="orders-table-wrap">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Email</th>
+            <th>Số SP</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Ngày đặt</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each orders}}
+          <tr class="order-row">
+            <td class="order-id-cell" title="{{this.id}}">{{this.id}}</td>
+            <td><strong>{{this.name}}</strong></td>
+            <td class="text-muted">{{this.email}}</td>
+            <td class="text-center">{{this.items.length}}</td>
+            <td class="order-total">${{this.total}}</td>
+            <td><span class="badge badge-{{this.status}}">{{this.statusLabel}}</span></td>
+            <td class="text-muted small">{{this.placedAt}}</td>
+            <td>
+              <a href="/staff/orders/{{this.id}}" class="btn-view" id="view-order-{{this.id}}">Chi tiết</a>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+    <div class="empty-state">
+      <div class="empty-icon">&#128230;</div>
+      <h3>Không có đơn hàng nào</h3>
+      <p>{{#if search}}Không tìm thấy kết quả cho "<strong>{{search}}</strong>"{{else}}Chưa có đơn hàng trong danh mục này.{{/if}}</p>
+      {{#if search}}<a href="/staff/orders" class="btn-staff-secondary">Xoá bộ lọc</a>{{/if}}
+    </div>
+    {{/if}}
+  </div>
+
+</div>
