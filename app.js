@@ -23,8 +23,15 @@ function createApp() {
       times:      (a, b) => +(a * b).toFixed(2),
       formatDate: d      => d ? new Date(d).toLocaleDateString('vi-VN') : '',
       badgeClass: badge  => {
-        const map = { Bestseller:'badge-gold', New:'badge-teal', Sale:'badge-red', Limited:'badge-purple' };
-        return map[badge] || 'badge-gray';
+        const map = { Bestseller:'gold', New:'teal', Sale:'red', Limited:'purple' };
+        return map[badge] || 'gray';
+      },
+      subtract:   (a, b) => (a || 0) - (b || 0),
+      stockClass: stock  => {
+        if (stock === null || stock === undefined) return 'gray';
+        if (stock === 0) return 'out';
+        if (stock <= 10) return 'low';
+        return 'in';
       },
     },
   }));

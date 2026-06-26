@@ -27,11 +27,18 @@ router.post('/register', authCtrl.register);
 router.get ('/profile',  authCtrl.requireLogin, authCtrl.showProfile);
 
 // ── Staff (requireStaff) ──────────────────────────────────────
-router.get ('/staff/dashboard',           authCtrl.requireStaff, staffCtrl.showDashboard);
-router.get ('/staff/orders',              authCtrl.requireStaff, staffCtrl.listOrders);
-router.get ('/staff/orders/:id',          authCtrl.requireStaff, staffCtrl.viewOrder);
-router.post('/staff/orders/:id/status',   authCtrl.requireStaff, staffCtrl.updateStatus);
-router.get ('/staff/customers',           authCtrl.requireStaff, staffCtrl.listCustomers);
+router.get ('/staff/dashboard',              authCtrl.requireStaff, staffCtrl.showDashboard);
+router.get ('/staff/orders',                 authCtrl.requireStaff, staffCtrl.listOrders);
+router.get ('/staff/orders/:id',             authCtrl.requireStaff, staffCtrl.viewOrder);
+router.post('/staff/orders/:id/status',      authCtrl.requireStaff, staffCtrl.updateStatus);
+router.get ('/staff/customers',              authCtrl.requireStaff, staffCtrl.listCustomers);
+// Product CRUD — /new phải đứng trước /:id để tránh conflict
+router.get ('/staff/products',               authCtrl.requireStaff, staffCtrl.listProducts);
+router.get ('/staff/products/new',           authCtrl.requireStaff, staffCtrl.showCreateProduct);
+router.post('/staff/products',               authCtrl.requireStaff, staffCtrl.createProduct);
+router.get ('/staff/products/:id/edit',      authCtrl.requireStaff, staffCtrl.showEditProduct);
+router.post('/staff/products/:id/edit',      authCtrl.requireStaff, staffCtrl.updateProduct);
+router.post('/staff/products/:id/delete',    authCtrl.requireStaff, staffCtrl.deleteProduct);
 
 module.exports = router;
 

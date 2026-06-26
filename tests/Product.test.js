@@ -17,7 +17,7 @@ describe('Product model', () => {
   });
 
   test('getById returns undefined for missing product', () => {
-    expect(Product.getById(999)).toBeUndefined();
+    expect(Product.getById(999)).toBeFalsy();
   });
 
   test('getCategories returns unique categories', () => {

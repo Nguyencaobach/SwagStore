@@ -2,6 +2,8 @@
 
 const Order   = require('../models/Order');
 const Account = require('../models/Account');
+const Product = require('../models/Product');
+const Category = require('../models/Category');
 
 const VALID_STATUSES = ['confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
 
@@ -137,7 +139,110 @@ function statusLabel(status) {
     processing: '\u0110ang x\u1eed l\u00fd',
     shipped:    '\u0110ang giao',
     delivered:  '\u0110\u00e3 giao',
-    cancelled:  '\u0110\u00e3 hu\u1ef7',
+    cancelled:  'Đã huỷ',
   };
   return map[status] || status;
 }
+
+const VALID_BADGES = ['Bestseller', 'New', 'Sale', 'Limited', 'none'];
+
+// ── GET /staff/products ─────────────────────────────────────────
+exports.listProducts = (req, res) => {
+  const { search } = req.query;
+  let products = Product.getAll();
+
+  if (search && search.trim()) {
+    const q = search.trim().toLowerCase();
+    products = products.filter(p =>
+      (p.name     || '').toLowerCase().includes(q) ||
+      (p.category || '').toLowerCase().includes(q) ||
+      (p.type     || '').toLowerCase().includes(q)
+    );
+  }
+
+  res.render('staff-products', {
+    user:       req.session.user,
+    products,
+    cartCount:  0,
+    search:     search || '',
+    totalCount: products.length,
+  });
+};
+
+// ── GET /staff/products/new ─────────────────────────────────────
+exports.showCreateProduct = (req, res) => {
+  res.render('staff-product-form', {
+    user:       req.session.user,
+    cartCount:  0,
+    categories: Category.getAll(),
+    types:      Product.getTypes(),
+    badges:     VALID_BADGES,
+    isNew:      true,
+    product:    {},
+  });
+};
+
+// ── POST /staff/products ────────────────────────────────────────
+exports.createProduct = (req, res) => {
+  try {
+    Product.add(req.body);
+    res.redirect('/staff/products?success=created');
+  } catch (err) {
+    res.render('staff-product-form', {
+      user:       req.session.user,
+      cartCount:  0,
+      categories: Category.getAll(),
+      types:      Product.getTypes(),
+      badges:     VALID_BADGES,
+      isNew:      true,
+      product:    req.body,
+      error:      err.message,
+    });
+  }
+};
+
+// ── GET /staff/products/:id/edit ────────────────────────────────
+exports.showEditProduct = (req, res) => {
+  const product = Product.getById(req.params.id);
+  if (!product) return res.redirect('/staff/products?error=notfound');
+
+  res.render('staff-product-form', {
+    user:       req.session.user,
+    cartCount:  0,
+    categories: Category.getAll(),
+    types:      Product.getTypes(),
+    badges:     VALID_BADGES,
+    isNew:      false,
+    product,
+  });
+};
+
+// ── POST /staff/products/:id/edit ───────────────────────────────
+exports.updateProduct = (req, res) => {
+  try {
+    Product.update(req.params.id, req.body);
+    res.redirect('/staff/products?success=updated');
+  } catch (err) {
+    const product = Product.getById(req.params.id) || req.body;
+    res.render('staff-product-form', {
+      user:       req.session.user,
+      cartCount:  0,
+      categories: Category.getAll(),
+      types:      Product.getTypes(),
+      badges:     VALID_BADGES,
+      isNew:      false,
+      product:    { ...product, ...req.body, id: req.params.id },
+      error:      err.message,
+    });
+  }
+};
+
+// ── POST /staff/products/:id/delete ─────────────────────────────
+exports.deleteProduct = (req, res) => {
+  try {
+    Product.delete(req.params.id);
+    res.redirect('/staff/products?success=deleted');
+  } catch (err) {
+    res.redirect('/staff/products?error=deletefail');
+  }
+};

@@ -1,0 +1,199 @@
+<div class="staff-page">
+
+  <!-- Header -->
+  <div class="staff-header">
+    <div class="staff-header-inner">
+      <div>
+        <h1 class="staff-title">
+          {{#if isNew}}&#43; Thêm sản phẩm mới{{else}}&#9998; Sửa sản phẩm{{/if}}
+        </h1>
+        {{#unless isNew}}
+        <p class="staff-subtitle order-id-display">ID: #{{product.id}}</p>
+        {{/unless}}
+      </div>
+      <a href="/staff/products" class="btn-staff-secondary">&larr; Danh sách</a>
+    </div>
+  </div>
+
+  {{#if error}}
+  <div class="alert alert-error" id="form-error">&#10007; {{error}}</div>
+  {{/if}}
+
+  <!-- Form -->
+  <div class="staff-section">
+    <form method="POST"
+          action="{{#if isNew}}/staff/products{{else}}/staff/products/{{product.id}}/edit{{/if}}"
+          id="product-form"
+          class="product-form">
+
+      <div class="form-grid">
+
+        <!-- Tên sản phẩm -->
+        <div class="form-group form-full">
+          <label class="form-label" for="field-name">Tên sản phẩm *</label>
+          <input type="text" id="field-name" name="name"
+                 value="{{product.name}}"
+                 placeholder="VD: Sauce Labs Backpack"
+                 class="form-input" required maxlength="120"
+                 oninput="updateCharCount(this, 'name-count', 120)">
+          <span class="field-hint">Còn lại: <span id="name-count">{{#if product.name}}{{subtract 120 product.name.length}}{{else}}120{{/if}}</span> ký tự</span>
+        </div>
+
+        <!-- Giá -->
+        <div class="form-group">
+          <label class="form-label" for="field-price">Giá ($) *</label>
+          <input type="number" id="field-price" name="price"
+                 value="{{product.price}}"
+                 placeholder="0.00" step="0.01" min="0"
+                 class="form-input" required>
+        </div>
+
+        <!-- Số lượng tồn kho -->
+        <div class="form-group">
+          <label class="form-label" for="field-stock">Tồn kho</label>
+          <input type="number" id="field-stock" name="stock"
+                 value="{{product.stock}}"
+                 placeholder="Bỏ trống = không giới hạn"
+                 class="form-input" min="0" step="1">
+          <span class="field-hint">Để trống nếu không quản lý tồn kho</span>
+        </div>
+
+        <!-- Danh mục -->
+        <div class="form-group">
+          <label class="form-label" for="field-category">Danh mục *</label>
+          <select id="field-category" name="category" class="status-select" required>
+            <option value="">-- Chọn danh mục --</option>
+            {{#each categories}}
+            <option value="{{this}}" {{#if (eq this ../product.category)}}selected{{/if}}>{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Loại sản phẩm -->
+        <div class="form-group">
+          <label class="form-label" for="field-type">Loại sản phẩm *</label>
+          <select id="field-type" name="type" class="status-select" required>
+            <option value="">-- Chọn loại --</option>
+            {{#each types}}
+            <option value="{{this}}" {{#if (eq this ../product.type)}}selected{{/if}}>{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Badge -->
+        <div class="form-group">
+          <label class="form-label" for="field-badge">Badge</label>
+          <select id="field-badge" name="badge" class="status-select">
+            {{#each badges}}
+            <option value="{{this}}" {{#if (eq this ../product.badge)}}selected{{/if}}>
+              {{#if (eq this 'none')}}Không có{{else}}{{this}}{{/if}}
+            </option>
+            {{/each}}
+          </select>
+        </div>
+
+        <!-- Image URL + Preview -->
+        <div class="form-group form-full">
+          <label class="form-label" for="field-image">Đường dẫn ảnh</label>
+          <div class="image-preview-wrap">
+            <div class="image-preview-box {{#if product.image}}has-image{{/if}}" id="img-preview-box">
+              {{#if product.image}}
+                <img id="img-preview" src="{{product.image}}" alt="Preview"
+                     onerror="this.parentElement.innerHTML='<span class=\'preview-placeholder\'>&#128247; Ảnh không tải được</span>'">
+              {{else}}
+                <span class="preview-placeholder">&#128247; Nhập URL để xem trước ảnh</span>
+              {{/if}}
+            </div>
+            <input type="text" id="field-image" name="image"
+                   value="{{product.image}}"
+                   placeholder="/images/product.svg hoặc https://..."
+                   class="form-input"
+                   oninput="previewImage(this.value)">
+          </div>
+        </div>
+
+        <!-- Mô tả -->
+        <div class="form-group form-full">
+          <label class="form-label" for="field-desc">Mô tả sản phẩm</label>
+          <textarea id="field-desc" name="desc"
+                    placeholder="Mô tả ngắn về sản phẩm..."
+                    class="form-input form-textarea" rows="3"
+                    maxlength="300"
+                    oninput="updateCharCount(this, 'desc-count', 300)">{{product.desc}}</textarea>
+          <span class="field-hint">Còn lại: <span id="desc-count">{{#if product.desc}}{{subtract 300 product.desc.length}}{{else}}300{{/if}}</span> ký tự</span>
+        </div>
+
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="submit" class="btn-staff-primary" id="btn-submit-product">
+          {{#if isNew}}&#43; Thêm sản phẩm{{else}}&#10003; Lưu thay đổi{{/if}}
+        </button>
+        <a href="/staff/products" class="btn-staff-secondary">Huỷ</a>
+        {{#unless isNew}}
+        <button type="button" class="btn-delete" id="btn-open-delete"
+                onclick="openDeleteConfirm({{product.id}}, '{{product.name}}')">
+          &#128465; Xoá sản phẩm
+        </button>
+        {{/unless}}
+      </div>
+
+    </form>
+  </div>
+
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="confirm-overlay" id="delete-overlay">
+  <div class="confirm-modal">
+    <h3>&#9888; Xác nhận xoá</h3>
+    <p>Bạn có chắc muốn xoá sản phẩm <strong id="delete-product-name"></strong>?<br>
+       Hành động này <strong>không thể hoàn tác</strong>.</p>
+    <div class="confirm-btns">
+      <button class="btn-staff-secondary" onclick="closeDeleteConfirm()">Huỷ</button>
+      <form id="delete-confirm-form" method="POST" action="" style="display:inline">
+        <button type="submit" class="btn-danger" id="btn-confirm-delete">&#128465; Xoá</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// Image preview
+function previewImage(url) {
+  const box = document.getElementById('img-preview-box');
+  if (!url || !url.trim()) {
+    box.classList.remove('has-image');
+    box.innerHTML = '<span class="preview-placeholder">&#128247; Nhập URL để xem trước ảnh</span>';
+    return;
+  }
+  box.classList.add('has-image');
+  box.innerHTML = '<img id="img-preview" src="' + url.trim() + '" alt="Preview" ' +
+    'onerror="this.parentElement.innerHTML=\'<span class=\\\'preview-placeholder\\\'>&#128247; Ảnh không tải được</span>\'; this.parentElement.classList.remove(\'has-image\')">';
+}
+
+// Char counter
+function updateCharCount(el, countId, max) {
+  const left = max - el.value.length;
+  document.getElementById(countId).textContent = Math.max(0, left);
+}
+
+// Delete confirm modal
+function openDeleteConfirm(id, name) {
+  document.getElementById('delete-product-name').textContent = name;
+  document.getElementById('delete-confirm-form').action = '/staff/products/' + id + '/delete';
+  document.getElementById('delete-overlay').classList.add('open');
+}
+function closeDeleteConfirm() {
+  document.getElementById('delete-overlay').classList.remove('open');
+}
+// Close on backdrop click
+document.getElementById('delete-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeDeleteConfirm();
+});
+// ESC key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDeleteConfirm();
+});
+</script>

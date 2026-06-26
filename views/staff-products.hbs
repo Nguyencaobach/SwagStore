@@ -1,0 +1,159 @@
+<div class="staff-page">
+
+  <!-- Header -->
+  <div class="staff-header">
+    <div class="staff-header-inner">
+      <div>
+        <h1 class="staff-title">&#128717; Sản phẩm</h1>
+        <p class="staff-subtitle">
+          Tổng cộng <strong>{{totalCount}}</strong> sản phẩm
+          {{#if search}}<span class="text-muted"> — kết quả tìm kiếm cho "{{search}}"</span>{{/if}}
+        </p>
+      </div>
+      <a href="/staff/products/new" class="btn-staff-primary" id="btn-add-product">&#43; Thêm sản phẩm</a>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  {{#if (eq success 'created')}}<div class="alert alert-success" id="alert-created">&#10003; Thêm sản phẩm thành công!</div>{{/if}}
+  {{#if (eq success 'updated')}}<div class="alert alert-success" id="alert-updated">&#10003; Cập nhật sản phẩm thành công!</div>{{/if}}
+  {{#if (eq success 'deleted')}}<div class="alert alert-success" id="alert-deleted">&#10003; Đã xoá sản phẩm.</div>{{/if}}
+  {{#if (eq error 'notfound')}} <div class="alert alert-error">&#10007; Không tìm thấy sản phẩm.</div>{{/if}}
+  {{#if (eq error 'deletefail')}}<div class="alert alert-error">&#10007; Xoá sản phẩm thất bại.</div>{{/if}}
+
+  <!-- Search -->
+  <div class="staff-section">
+    <div class="filter-bar">
+      <form method="GET" action="/staff/products" class="search-form" id="search-form">
+        <div class="search-box">
+          <input type="text" name="search" value="{{search}}"
+                 placeholder="Tìm tên, danh mục, loại..."
+                 class="search-input" id="product-search-input"
+                 autocomplete="off">
+          <button type="submit" class="search-btn" title="Tìm kiếm">&#128269;</button>
+        </div>
+      </form>
+      {{#if search}}
+      <a href="/staff/products" class="btn-staff-secondary" id="btn-clear-search">&#10005; Xoá tìm kiếm</a>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Products Table -->
+  <div class="staff-section">
+    {{#if products.length}}
+    <div class="orders-table-wrap">
+      <table class="orders-table" id="products-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Danh mục</th>
+            <th>Loại</th>
+            <th class="text-right">Giá</th>
+            <th>Tồn kho</th>
+            <th>Badge</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each products}}
+          <tr class="order-row" id="product-row-{{this.id}}">
+            <td class="text-muted small">{{this.id}}</td>
+            <td>
+              <img src="{{this.image}}" alt="{{this.name}}"
+                   class="product-thumb"
+                   onerror="this.src='/images/placeholder.svg'">
+            </td>
+            <td>
+              <div class="item-name">{{this.name}}</div>
+              {{#if this.desc}}
+              <div class="item-meta text-muted">{{this.desc}}</div>
+              {{/if}}
+            </td>
+            <td>{{this.category}}</td>
+            <td class="text-muted">{{this.type}}</td>
+            <td class="text-right order-total">${{this.price}}</td>
+            <td>
+              {{#if this.stock}}
+                {{#if (gt this.stock 10)}}
+                  <span class="stock-badge stock-in">&#9679; {{this.stock}}</span>
+                {{else}}
+                  <span class="stock-badge stock-low">&#9651; {{this.stock}}</span>
+                {{/if}}
+              {{else}}
+                <span class="text-muted small">—</span>
+              {{/if}}
+            </td>
+            <td>
+              {{#if this.badge}}
+                <span class="badge badge-{{badgeClass this.badge}}">{{this.badge}}</span>
+              {{else}}
+                <span class="text-muted small">—</span>
+              {{/if}}
+            </td>
+            <td>
+              <div class="action-btns">
+                <a href="/staff/products/{{this.id}}/edit" class="btn-view" id="btn-edit-{{this.id}}">Sửa</a>
+                <button type="button" class="btn-delete" id="btn-delete-{{this.id}}"
+                        onclick="openDeleteConfirm({{this.id}}, '{{this.name}}')">Xoá</button>
+              </div>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+    {{else}}
+    <div class="empty-state">
+      <div class="empty-icon">&#128717;</div>
+      <h3>Không tìm thấy sản phẩm</h3>
+      <p>{{#if search}}Không có kết quả cho "<strong>{{search}}</strong>"{{else}}Chưa có sản phẩm nào.{{/if}}</p>
+      <a href="/staff/products/new" class="btn-staff-primary">&#43; Thêm sản phẩm</a>
+    </div>
+    {{/if}}
+  </div>
+
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="confirm-overlay" id="delete-overlay">
+  <div class="confirm-modal">
+    <h3>&#9888; Xác nhận xoá</h3>
+    <p>Bạn có chắc muốn xoá sản phẩm <strong id="delete-product-name"></strong>?<br>
+       Hành động này <strong>không thể hoàn tác</strong>.</p>
+    <div class="confirm-btns">
+      <button class="btn-staff-secondary" onclick="closeDeleteConfirm()">Huỷ</button>
+      <form id="delete-confirm-form" method="POST" action="" style="display:inline">
+        <button type="submit" class="btn-danger" id="btn-confirm-delete">&#128465; Xoá</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function openDeleteConfirm(id, name) {
+  document.getElementById('delete-product-name').textContent = name;
+  document.getElementById('delete-confirm-form').action = '/staff/products/' + id + '/delete';
+  document.getElementById('delete-overlay').classList.add('open');
+}
+function closeDeleteConfirm() {
+  document.getElementById('delete-overlay').classList.remove('open');
+}
+document.getElementById('delete-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeDeleteConfirm();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDeleteConfirm();
+});
+
+// Auto-dismiss alerts after 4s
+document.querySelectorAll('.alert').forEach(function(el) {
+  setTimeout(function() {
+    el.style.transition = 'opacity .5s';
+    el.style.opacity = '0';
+    setTimeout(function() { el.remove(); }, 500);
+  }, 4000);
+});
+</script>
